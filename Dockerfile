@@ -24,19 +24,20 @@ ENV LC_ALL en_US.UTF-8
 # Install base packages
 run apt-get update
 run apt-get upgrade -y
-run apt-get update &&  apt-get install -y \
-     build-essential \
+run apt-get update &&  apt-get install -y -q \
      git \
      curl \
      mercurial \
      python \ 
-     python-dev \ 
      python-setuptools \ 
      python-software-properties \
      nginx \
-     supervisor \
-     postgresql \
-     postgresql-contrib
+     supervisor 
+
+run apt-get update && apt-get install -y -q \
+    postgresql postgresql-9.1 \
+    postgresql-contrib postgresql-contrib-9.1 \
+    postgresql-common
 
 # Install pip
 run easy_install pip
@@ -56,13 +57,24 @@ run mkvirtualenv docker
 # Install our code
 add . /home/docker/code/
 
-# Setup all the configfiles
+# Setup all the configfiles NGINX
 run echo "daemon off;" >> /etc/nginx/nginx.conf
 run rm /etc/nginx/sites-enabled/default
 run ln -s /home/docker/code/nginx-app.conf /etc/nginx/sites-enabled/
 run ln -s /home/docker/code/supervisor-app.conf /etc/supervisor/conf.d/
 
-# Expose ports private only
-expose 80
+# Setup all the configfiles Postgre
+ADD postgresql.conf /etc/postgresql/9.3/main/postgresql.conf
+ADD pg_hba.conf /etc/postgresql/9.3/main/pg_hba.conf
+RUN chown postgres:postgres /etc/postgresql/9.3/main/*.conf
+ADD run /usr/local/bin/run
+RUN chmod +x /usr/local/bin/run
 
-cmd ["supervisord", "-n"]
+VOLUME ["/var/lib/postgresql"]
+
+# Expose ports private only
+EXPOSE 80 #NGIX
+EXPOSE 5432 #Postgres
+
+CMD ["/usr/local/bin/run"]
+CMD ["supervisord", "-n"]
