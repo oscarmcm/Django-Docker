@@ -2,8 +2,6 @@
 
 FROM ubuntu
 
-RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt/sources.list
-
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main" > /etc/apt/sources.list.d/pgdg.list
 
@@ -27,13 +25,23 @@ ENV LC_ALL en_US.UTF-8
 # Install base packages
 run apt-get update
 run apt-get upgrade -y
-run apt-get update &&  apt-get install -y -q -f \
+run apt-get update &&  apt-get install -y \
+     make \
+     automake \
+     gcc \
+     g++ \
+     cpp \
+     build-essential \
+     libc6-dev \
+     autoconf \
+     pkg-config
      git \
      curl \
      mercurial \
-     python \
      libxslt1-dev \
      libxml2-dev \
+     python \
+     python-dev \
      python-setuptools \ 
      python-software-properties \
      nginx \
@@ -48,13 +56,14 @@ run apt-get update && apt-get install -y -q -f \
 run easy_install pip
 
 # Install uwsgi now because it takes a little while
-# run pip install uwsgi
+run pip install uwsgi
 
 # Install fabric
-# run pip install fabric
+run pip install fabric
 
-# Intall virtualenv
+# Intall virtualenv and wrapper
 run pip install virtualenv
+run pip install virtualenvwrapper
 
 # Create a virtualenv replace te env_name
 # run mkvirtualenv docker
@@ -78,8 +87,8 @@ RUN chown postgres:postgres /etc/postgresql/9.3/main/*.conf
 VOLUME ["/var/lib/postgresql"]
 
 # Expose ports private only
-EXPOSE 80 
 EXPOSE 5432 
+# CMD ["/usr/local/bin/run"]
 
-CMD ["/usr/local/bin/run"]
+EXPOSE 80
 CMD ["supervisord", "-n"]
