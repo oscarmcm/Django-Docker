@@ -25,16 +25,14 @@ ENV LC_ALL en_US.UTF-8
 # Install base packages
 run apt-get update
 run apt-get upgrade -y
-run apt-get update &&  apt-get install -y \
-     make \
-     automake \
+run apt-get update &&  apt-get install -y -q -f \
      gcc \
      g++ \
      cpp \
      build-essential \
      libc6-dev \
      autoconf \
-     pkg-config
+     pkg-config \
      git \
      curl \
      mercurial \
