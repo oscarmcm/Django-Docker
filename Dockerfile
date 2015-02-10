@@ -63,11 +63,11 @@ run pip install fabric
 run pip install virtualenv
 run pip install virtualenvwrapper
 
-# Create a virtualenv replace te env_name
+# Create a virtualenv replace the env_name
 # run mkvirtualenv docker
 
 # Install our code
-# add . /home/docker/code/
+add . /home/docker/code/
 
 # Setup all the configfiles NGINX
 run echo "daemon off;" >> /etc/nginx/nginx.conf

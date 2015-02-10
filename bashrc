@@ -19,3 +19,7 @@ if ! shopt -oq posix; then
    . /etc/bash_completion
  fi
 fi
+
+#path for virtulenvs
+export WORKON_HOME=~/.virtualenvs
+source /usr/local/bin/virtualenvwrapper.sh
